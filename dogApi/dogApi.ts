@@ -1,7 +1,7 @@
 import { cyan, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 
 const BASE_URL =
-  "https://api.github.com/repos/Jamalam360/dog-api-images/contents";
+  "https://api.github.com/repos/dog-jamalam-tech/images/contents";
 const CACHE_FILE = "image_cache.json";
 const TOKEN = await Deno.readTextFile("./gh.env");
 
