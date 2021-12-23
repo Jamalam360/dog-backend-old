@@ -99,8 +99,9 @@ export const tryRecache = async () => {
     recache = false;
   }
 
-
-  if (recache) console.log(cyan(`Performing cache update as of ${new Date().toString()}`));
+  if (recache) {
+    console.log(cyan(`Performing cache update as of ${new Date().toString()}`));
+  }
 
   const start = Date.now();
 
@@ -110,7 +111,9 @@ export const tryRecache = async () => {
     await cacheImages(images);
 
     const ms = Date.now() - start;
-    console.log(yellow(`Fetching and caching ${images.length} images took ${ms}ms`));
+    console.log(
+      yellow(`Fetching and caching ${images.length} images took ${ms}ms`),
+    );
   } else if (images.length == 0) {
     console.log(cyan("Reading cached images..."));
     images = await getCachedImages();
