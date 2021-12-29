@@ -1,9 +1,9 @@
 import {
   ERROR,
+  INTERNAL_SERVER_ERROR_CODE,
   NOT_FOUND_CODE,
   SUCCESS,
   SUCCESS_CODE,
-  INTERNAL_SERVER_ERROR_CODE,
 } from "../../constants.ts";
 import { router } from "../routes.ts";
 import { createUser, getUser, getUserByLoginCode, updateUser } from "../../database/database.ts";
