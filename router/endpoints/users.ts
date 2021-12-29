@@ -6,7 +6,12 @@ import {
   SUCCESS_CODE,
 } from "../../constants.ts";
 import { router } from "../routes.ts";
-import { createUser, getUser, getUserByLoginCode, updateUser } from "../../database/database.ts";
+import {
+  createUser,
+  getUser,
+  getUserByLoginCode,
+  updateUser,
+} from "../../database/database.ts";
 
 router.get("/v0/user/new", async (ctx) => {
   const user = await createUser();
