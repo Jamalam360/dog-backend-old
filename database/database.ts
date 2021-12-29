@@ -102,6 +102,12 @@ export const getUser = async (
   return await users.findOne({ snowflake: userSnowflake });
 };
 
+export const getUserByLoginCode = async (
+  loginCode: string,
+): Promise<User | undefined> => {
+  return await users.findOne({ loginCode: loginCode });
+};
+
 export const updateUser = async (
   updatedUser: User,
 ): Promise<User> => {

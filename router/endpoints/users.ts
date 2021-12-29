@@ -6,7 +6,7 @@ import {
   INTERNAL_SERVER_ERROR_CODE,
 } from "../../constants.ts";
 import { router } from "../routes.ts";
-import { createUser, getUser, updateUser } from "../../database/database.ts";
+import { createUser, getUser, getUserByLoginCode, updateUser } from "../../database/database.ts";
 
 router.get("/v0/user/new", async (ctx) => {
   const user = await createUser();
@@ -59,6 +59,26 @@ router.get("/v0/user/:id/setIndex/:index", async (ctx) => {
     user.index = parseInt(ctx.params.index);
     updateUser(user);
 
+    ctx.response.status = SUCCESS_CODE;
+    ctx.response.body = {
+      status: SUCCESS,
+      snowflake: user.snowflake,
+      votedOn: user.votedOn,
+      index: user.index,
+      loginCode: user.loginCode,
+    };
+  }
+});
+
+router.get("/v0/user/:loginCode", async (ctx) => {
+  const user = await getUserByLoginCode(ctx.params.loginCode as string);
+  if (!user) {
+    ctx.response.status = NOT_FOUND_CODE;
+    ctx.response.body = {
+      status: ERROR,
+      message: "Unknown User Login Code",
+    };
+  } else {
     ctx.response.status = SUCCESS_CODE;
     ctx.response.body = {
       status: SUCCESS,
