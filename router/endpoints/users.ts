@@ -70,7 +70,7 @@ router.get("/v0/user/:id/setIndex/:index", async (ctx) => {
   }
 });
 
-router.get("/v0/user/:loginCode", async (ctx) => {
+router.get("/v0/user/login/:loginCode", async (ctx) => {
   const user = await getUserByLoginCode(ctx.params.loginCode as string);
   if (!user) {
     ctx.response.status = NOT_FOUND_CODE;
