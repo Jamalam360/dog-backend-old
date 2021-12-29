@@ -1,5 +1,6 @@
 import { Bson, MongoClient } from "https://deno.land/x/mongo@v0.28.1/mod.ts";
 import { getRandomImage } from "../dogApi/dogApi.ts";
+import { migrate } from "./migration.ts";
 import Snowflake from "https://deno.land/x/snowflake@v1/mod.ts";
 
 const client = new MongoClient();
@@ -18,11 +19,22 @@ interface User {
   _id: Bson.ObjectId;
   snowflake: string;
   votedOn: number[];
+  index: number;
+  loginCode: string;
 }
 
 const db = client.database("dog_image_website_db");
 const posts = db.collection<Post>("posts");
 const users = db.collection<User>("users");
+
+export const getRandomLoginCode = (): string => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += characters[Math.floor(Math.random() * characters.length)];
+  }
+  return code;
+};
 
 const appendTillIndex = (
   index: number,
@@ -51,9 +63,11 @@ export const createUser = async (): Promise<User> => {
   const user = await users.insertOne({
     snowflake: snowflake.toBase64(await snowflake.generate()),
     votedOn: [],
+    index: 0,
+    loginCode: getRandomLoginCode(),
   });
 
-  return await users.findOne({ _id: user }) as User;
+  return (await users.findOne({ _id: user })) as User;
 };
 
 export const getOrCreatePost = async (
@@ -88,6 +102,13 @@ export const getUser = async (
   return await users.findOne({ snowflake: userSnowflake });
 };
 
+export const updateUser = async (
+  updatedUser: User,
+): Promise<User> => {
+  const user = await users.replaceOne({ _id: updatedUser._id }, updatedUser);
+  return await users.findOne({ _id: user }) as User;
+};
+
 export const setVoteForUser = async (
   user: User,
   postIndex: number,
@@ -115,3 +136,6 @@ export const setVoteForPost = async (
 
   return await getOrCreatePost(index);
 };
+
+export default { db, posts, users };
+migrate();
