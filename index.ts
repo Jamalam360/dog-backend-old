@@ -3,8 +3,6 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { router } from "./router/routes.ts";
 import "./router/initRoutes.ts";
 import { cyan, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
-import { tryRecache } from "./dogApi/dogApi.ts";
-import { cron } from "https://deno.land/x/deno_cron@v1.0.0/cron.ts";
 
 const PORT = 8002;
 const CERTIFICATE_PATH = "/etc/letsencrypt/live/dog.jamalam.tech/fullchain.pem";
@@ -13,8 +11,6 @@ const PRIVATE_KEY_PATH = "/etc/letsencrypt/live/dog.jamalam.tech/privkey.pem";
 const app = new Application();
 
 let development = false;
-
-cron(`1 */30 * * * *`, () => tryRecache());
 
 await Deno.readTextFile(CERTIFICATE_PATH).catch(() => {
   console.log(
