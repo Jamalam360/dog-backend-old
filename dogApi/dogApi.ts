@@ -6,6 +6,7 @@ export const getRandomImage = async (): Promise<string> => {
   const json = await req.json();
   return json.message;
   } catch (_e) {
+    console.log("Dog API Is Still Booting Up!")
     await sleep(2.5);
     return getRandomImage();
   }
