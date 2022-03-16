@@ -18,7 +18,7 @@ router.get("/v0/posts/:index", async (ctx) => {
   const post = await getOrCreatePost(index);
   ctx.response.body = {
     code: SUCCESS_CODE,
-    data: post,
+    url: post?.imageUrl,
   };
 });
 
