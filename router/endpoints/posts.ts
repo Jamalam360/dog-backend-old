@@ -13,6 +13,15 @@ import {
   setVoteForUser,
 } from "../../database/database.ts";
 
+router.get("/v0/posts/:index", async (ctx) => {
+  const index = parseInt(ctx.params.index as string);
+  const post = await getOrCreatePost(index);
+  ctx.response.body = {
+    code: SUCCESS_CODE,
+    data: post,
+  };
+});
+
 router.get("/v0/posts/:index/:id", async (ctx) => {
   const index = parseInt(ctx.params.index as string);
   const post = await getOrCreatePost(index);

@@ -1,4 +1,4 @@
-import { sleep } from "https://deno.land/x/sleep/mod.ts";
+import { sleep } from "https://deno.land/x/sleep@v1.2.1/mod.ts";
 
 export const getRandomImage = async (): Promise<string> => {
   try {

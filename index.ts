@@ -1,7 +1,6 @@
 import { Application } from "https://deno.land/x/oak@v10.1.0/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { router } from "./router/routes.ts";
-import "./router/initRoutes.ts";
 import { cyan, yellow } from "https://deno.land/std@0.53.0/fmt/colors.ts";
 
 const PORT = 8002;
@@ -9,6 +8,7 @@ const CERTIFICATE_PATH = "/etc/letsencrypt/live/dog.jamalam.tech/fullchain.pem";
 const PRIVATE_KEY_PATH = "/etc/letsencrypt/live/dog.jamalam.tech/privkey.pem";
 
 const app = new Application();
+await import("./router/initRoutes.ts");
 
 let development = false;
 
