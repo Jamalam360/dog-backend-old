@@ -1,5 +1,6 @@
 import {
   ERROR,
+  INVALID_REQUEST_CODE,
   NOT_FOUND_CODE,
   SUCCESS,
   SUCCESS_CODE,
@@ -8,10 +9,10 @@ import {
 import { router } from "../routes.ts";
 import {
   getOrCreatePost,
-  getUser,
   setVoteForPost,
   setVoteForUser,
 } from "../../database/database.ts";
+import { getUser } from "../../util.ts";
 
 router.get("/v0/posts/:index", async (ctx) => {
   const index = parseInt(ctx.params.index as string);
@@ -22,12 +23,12 @@ router.get("/v0/posts/:index", async (ctx) => {
   };
 });
 
-router.get("/v0/posts/:index/:id", async (ctx) => {
+router.get("/v0/posts/:index", async (ctx) => {
   const index = parseInt(ctx.params.index as string);
   const post = await getOrCreatePost(index);
 
   if (post) {
-    const user = await getUser(ctx.params.id as string);
+    const user = await getUser(ctx.request.headers);
 
     if (!user) {
       ctx.response.status = UNAUTHORISED_CODE;
@@ -63,10 +64,21 @@ router.get("/v0/posts/:index/:id", async (ctx) => {
   }
 });
 
-router.get("/v0/posts/:index/vote/:value/:id", async (ctx) => {
-  const user = await getUser(ctx.params.id as string);
+router.post("/v0/posts/:index", async (ctx) => {
+  const user = await getUser(ctx.request.headers);
   const index = parseInt(ctx.params.index as string);
-  const vote = parseInt(ctx.params.value as string);
+
+  const body = await ctx.request.body({ type: "json" }).value;
+
+  if (!body.vote) {
+    ctx.response.status = INVALID_REQUEST_CODE;
+    ctx.response.body = {
+      status: ERROR,
+      message: "Vote is undefined",
+    };
+  }
+
+  const vote = body.vote;
 
   if (!user) {
     ctx.response.status = UNAUTHORISED_CODE;
@@ -107,7 +119,7 @@ router.get("/v0/posts/:index/vote/:value/:id", async (ctx) => {
         url: post.imageUrl,
         index: post.index,
         votes: post.votes,
-        value: (await getUser(ctx.params.id as string))?.votedOn[index],
+        value: vote,
       };
     } else {
       ctx.response.status = NOT_FOUND_CODE;

@@ -15,7 +15,7 @@ interface Post {
   index: number;
 }
 
-interface User {
+export interface User {
   _id: Bson.ObjectId;
   snowflake: string;
   votedOn: number[];

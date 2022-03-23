@@ -1,6 +1,7 @@
 import {
   ERROR,
   INTERNAL_SERVER_ERROR_CODE,
+  INVALID_REQUEST_CODE,
   NOT_FOUND_CODE,
   SUCCESS,
   SUCCESS_CODE,
@@ -8,10 +9,10 @@ import {
 import { router } from "../routes.ts";
 import {
   createUser,
-  getUser,
   getUserByLoginCode,
   updateUser,
 } from "../../database/database.ts";
+import { getUser } from "../../util.ts";
 
 router.get("/v0/user/new", async (ctx) => {
   const user = await createUser();
@@ -30,8 +31,8 @@ router.get("/v0/user/new", async (ctx) => {
   }
 });
 
-router.get("/v0/user/:id", async (ctx) => {
-  const user = await getUser(ctx.params.id as string);
+router.get("/v0/user", async (ctx) => {
+  const user = await getUser(ctx.request.headers);
 
   if (!user) {
     ctx.response.status = NOT_FOUND_CODE;
@@ -51,8 +52,8 @@ router.get("/v0/user/:id", async (ctx) => {
   }
 });
 
-router.get("/v0/user/:id/setIndex/:index", async (ctx) => {
-  const user = await getUser(ctx.params.id as string);
+router.post("/v0/user", async (ctx) => {
+  const user = await getUser(ctx.request.headers);
 
   if (!user) {
     ctx.response.status = NOT_FOUND_CODE;
@@ -61,7 +62,16 @@ router.get("/v0/user/:id/setIndex/:index", async (ctx) => {
       message: "Unknown User Snowflake",
     };
   } else {
-    user.index = parseInt(ctx.params.index);
+    const body = await ctx.request.body({ type: "json" }).value;
+
+    if (!body.index) {
+      ctx.response.status = INVALID_REQUEST_CODE;
+      ctx.response.body = {
+        status: ERROR,
+        message: "Please provide index",
+      };
+    }
+
     updateUser(user);
 
     ctx.response.status = SUCCESS_CODE;
