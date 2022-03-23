@@ -17,25 +17,17 @@ import { getUser } from "../../util.ts";
 router.get("/v0/posts/:index", async (ctx) => {
   const index = parseInt(ctx.params.index as string);
   const post = await getOrCreatePost(index);
-  ctx.response.body = {
-    code: SUCCESS_CODE,
-    url: post?.imageUrl,
-  };
-});
-
-router.get("/v0/posts/:index", async (ctx) => {
-  const index = parseInt(ctx.params.index as string);
-  const post = await getOrCreatePost(index);
 
   if (post) {
     const user = await getUser(ctx.request.headers);
 
     if (!user) {
-      ctx.response.status = UNAUTHORISED_CODE;
+      ctx.response.status = SUCCESS_CODE;
       ctx.response.body = {
-        status: ERROR,
-        message: "Unknown User Snowflake",
+        status: SUCCESS,
+        url: post?.imageUrl,
       };
+      return;
     } else {
       if (!user?.votedOn[index]) {
         setVoteForUser(user!, index, 0);
