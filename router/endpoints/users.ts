@@ -72,6 +72,8 @@ router.post("/v0/user", async (ctx) => {
       };
     }
 
+    user.index = body.index;
+
     updateUser(user);
 
     ctx.response.status = SUCCESS_CODE;
