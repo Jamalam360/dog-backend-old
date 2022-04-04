@@ -51,8 +51,8 @@ if (!development) {
 
   app.use(
     oakCors({
-//      origin: "https://dog.jamalam.tech",
-	origin: "*",
+      //      origin: "https://dog.jamalam.tech",
+      origin: "*",
     }),
   );
 
